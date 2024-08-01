@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler")
 const validator = require("validator")
-const { checkEmpty } = require("../utils/handleempty")
+const { checkEmpty } = require("../utils/handleEmpty")
 const Doctor = require("../models/Doctor")
 const { heroUpload } = require("../utils/upload")
 const DrFees = require("../models/DrFees")

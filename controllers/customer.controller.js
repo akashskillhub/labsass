@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler")
 const validator = require("validator")
-const { checkEmpty } = require("../utils/handleempty")
+const { checkEmpty } = require("../utils/handleEmpty")
 const sendEmail = require("../utils/email")
 const bcrypt = require("bcrypt")
 const Orders = require("../models/Orders")

@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler")
 const validator = require("validator")
-const { checkEmpty } = require("../utils/handleempty")
+const { checkEmpty } = require("../utils/handleEmpty")
 const Lab = require("../models/Lab")
 const LabPackage = require("../models/LabPackage")
 const bcrypt = require("bcrypt")
