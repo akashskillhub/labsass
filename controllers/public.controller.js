@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler")
 const CustomerPackages = require("../models/CustomerPackages")
 const QnA = require("../models/QnA")
+const City = require("../models/City")
 
 exports.getAllCustomerPackage = asyncHandler(async (req, res) => {
     const result = await CustomerPackages.find({ active: true }).populate("company")
@@ -16,14 +17,11 @@ exports.getCustomerPackageDetails = asyncHandler(async (req, res) => {
         qna: qnaResult
     })
 })
-
-
-// FETCH ALL ACTIVE CUSTOMER PACKAGES
-// FETCH ALL ACTIVE CUSTOMER PACKAGES DETAILS (packageId)
-
-// public route
-// entry
-//public Api
-// store entry
-// print on home page
+exports.getCities = asyncHandler(async (req, res) => {
+    const result = await City.find()
+    return res.json({
+        messsage: "City Fetch Success",
+        result,
+    })
+})
 
