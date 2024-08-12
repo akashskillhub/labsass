@@ -14,7 +14,8 @@ app.use(express.static("uploads"))
 app.use(cors({
     origin: process.env.NODE_ENV === "production"
         ? process.env.LIVE_SERVER
-        : "http://localhost:5173",
+        : "http://localhost:3000",
+    // origin: "http://localhost:3000",
     credentials: true,
 }))
 
@@ -25,6 +26,7 @@ app.use("/api/v1/lab", labProtected, require("./routes/lab.routes"))
 app.use("/api/v1/auth", require("./routes/auth.route"))
 app.use("/api/v1/public", require("./routes/public.route"))
 app.use("/api/v1/employee", employeeProtected, require("./routes/employee.route"))
+// app.use("/api/v1/customer", customerProtected, require("./routes/customer.route"))
 app.use("/api/v1/customer", customerProtected, require("./routes/customer.route"))
 app.use("/api/v1/medical", medicalProtected, require("./routes/medical.route"))
 app.use("/api/v1/doctor", doctorProtected, require("./routes/doctor.route"))

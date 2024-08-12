@@ -24,7 +24,6 @@ exports.registerSuperAdmin = asyncHandler(async (req, res) => {
     return res.json({ messsage: "Super Admin Create Success" })
 
 })
-
 exports.loginSuperAdmin = asyncHandler(async (req, res) => {
     const { userName, password } = req.body
     const { isError, error } = checkEmpty({ userName, password })
@@ -75,7 +74,6 @@ exports.loginSuperAdmin = asyncHandler(async (req, res) => {
     res.json({ message: "OTP sent successfully" })
 
 })
-
 exports.verifySuperAdminOTP = asyncHandler(async (req, res) => {
     const { otp, userName } = req.body
     const { isError, error } = checkEmpty({ otp, userName })
@@ -132,9 +130,74 @@ exports.verifySuperAdminOTP = asyncHandler(async (req, res) => {
     })
 
 })
+
+
 //WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+exports.registerCustomer = asyncHandler(async (req, res) => {
+    const { mobile, password } = req.body
+    const hashPass = await bcrypt.hash(password, 10)
+    await Customer.create({ mobile, password: hashPass })
+    return res.json({ messsage: "Customer Register Success" })
+
+})
+exports.loginCustomer = asyncHandler(async (req, res) => {
+    const { mobile, password } = req.body
+    console.log(req.body);
+
+    const { isError, error } = checkEmpty({ mobile, password })
+    if (isError) {
+        return res.status(400).json({ messsage: "All Feilds Required", error })
+    }
+    if (!validator.isMobilePhone(mobile.toString(), "en-IN")) {
+        return res.status(400).json({
+            messsage: "Invalid Email Or Mobile",
+            error: "Invalid Email Or Mobile"
+        })
+    }
+    const isFound = await Customer.findOne({ mobile })
+    console.log(isFound);
+
+    if (!isFound) {
+
+        return res.status(400).json({
+            messsage: "  Mobile is not Found",
+            error: "  Mobile is not Found"
+        })
+    }
+    const verify = await bcrypt.compare(password, isFound.password)
+    if (!verify) {
+        await sendEmail({
+            to: process.env.FROM_EMAIL,
+            subject: "Login Attempt Failed",
+            message: 'Some one Tried to login'
+        })
+        return res.status(400).json({
+            messsage: " Invalid Credentials",
+            error: " Invalid Credentials"
+        })
+    }
+    const token = jwt.sign({ userId: isFound._id },
+        process.env.JWT_KEY,
+        { expiresIn: process.env.JWT_CITY_ADMIN_EXPIRE })
+
+    res.cookie("customer", token, {
+        httpOnly: true,
+        maxAge: process.env.CITY_ADMIN_COOKIE_EXPIRE,
+        secure: process.env.NODE_ENV === "production"
+    })
+
+    res.json({
+        message: "Login Success", result: {
+            _id: isFound._id,
+            mobile: isFound.mobile,
+            role: isFound.role,
+
+        }
+    })
+})
 
 
+//WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 exports.loginCityAdmin = asyncHandler(async (req, res) => {
     const { userName, password } = req.body
     const { isError, error } = checkEmpty({ userName, password })
@@ -192,8 +255,9 @@ exports.loginCityAdmin = asyncHandler(async (req, res) => {
         }
     })
 })
-//QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
 
+
+//QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
 exports.loginLab = asyncHandler(async (req, res) => {
     const { userName, password } = req.body
     const { isError, error } = checkEmpty({ userName, password })
@@ -251,8 +315,9 @@ exports.loginLab = asyncHandler(async (req, res) => {
         }
     })
 })
-//CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
+
+//CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 exports.loginEmployee = asyncHandler(async (req, res) => {
     const { userName, password } = req.body
     const { isError, error } = checkEmpty({ userName, password })
@@ -317,10 +382,13 @@ exports.logout = asyncHandler(async (req, res) => {
     res.json({ message: "User Logout Success", result: user })
 
 })
-//OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 
+
+//OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 exports.continueWithGoogle = asyncHandler(async (req, res) => {
     const { credential } = req.body
+    console.log(req.body);
+
     const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
     const verify = await client.verifyIdToken({ idToken: credential })
     if (!verify) {

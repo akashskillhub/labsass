@@ -3,7 +3,7 @@ const mongoose = require("mongoose")
 const customerSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true,
+        // required: true,
     },
     role: {
         type: String,
@@ -35,6 +35,9 @@ const customerSchema = new mongoose.Schema({
         default: true
     },
     blockResone: {
+        type: String,
+    },
+    password: {
         type: String,
     }
 

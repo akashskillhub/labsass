@@ -25,11 +25,11 @@ const orderSchema = new mongoose.Schema({
     },
     location: {
         type: String,
-        required: true
+        // required: true
     },
     city: {
         type: String,
-        required: true
+        // required: true
     },
     cancleReason: {
         type: String,
@@ -39,7 +39,7 @@ const orderSchema = new mongoose.Schema({
     },
     schedule: {
         type: Date,
-        required: true
+        // required: true
     },
 
 }, { timestamps: true })
