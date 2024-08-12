@@ -102,11 +102,11 @@ exports.fetchOrders = asyncHandler(async (req, res) => {
     return res.json({ messsage: "Fetch Orders Success", result })
 })
 exports.placeOrder = asyncHandler(async (req, res) => {
-    // const { package, location, city, schedule, time, newAddress } = req.body
-    const { package } = req.body
+    const { package, location, city, schedule, time, newAddress } = req.body
+    // const { package } = req.body
     const customer = req.user
-    // const { isError, error } = checkEmpty({ customer, package, location, city, schedule, time })
-    const { isError, error } = checkEmpty({ customer, package })
+    const { isError, error } = checkEmpty({ customer, package, location, city, schedule, time })
+    // const { isError, error } = checkEmpty({ customer, package })
     if (isError) {
         return res.status(400).json({ messsage: "All Feilds Required", error })
     }
@@ -116,17 +116,17 @@ exports.placeOrder = asyncHandler(async (req, res) => {
     if (!validator.isMongoId(customer)) {
         return res.status(400).json({ messsage: "Invalid customer Id", error: "Invalid customer Id" })
     }
-    // if (newAddress) {
-    //     await CustomerAddress.create({ customer: req.user, location, city })
-    // }
-    // const result = await Customer.findById(customer)
-    // await sendEmail({
-    //     to: result.email, subject: "Welcome to Lab SAAS", message: `
-    // <h1>${result.name},Welcome to Lab SAAS</h1>
-    // <p>Your Order Details are  ${package}</p>
-    // `})
-    // await Orders.create({ customer, package, location, city, schedule, time })
-    await Orders.create({ customer, package })
+    if (newAddress) {
+        await CustomerAddress.create({ customer: req.user, location, city })
+    }
+    const result = await Customer.findById(customer)
+    await sendEmail({
+        to: result.email, subject: "Welcome to Lab SAAS", message: `
+    <h1>${result.name},Welcome to Lab SAAS</h1>
+    <p>Your Order Details are  ${package}</p>
+    `})
+    await Orders.create({ customer, package, location, city, schedule, time })
+    // await Orders.create({ customer, package })
     return res.json({ messsage: "Customer Orders Placed Successfully" })
 })
 exports.fetchCustomerAddress = asyncHandler(async (req, res) => {
