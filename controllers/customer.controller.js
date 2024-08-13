@@ -132,7 +132,10 @@ exports.placeOrder = asyncHandler(async (req, res) => {
     return res.json({ messsage: "Customer Orders Placed Successfully" })
 })
 exports.fetchCustomerAddress = asyncHandler(async (req, res) => {
-    const result = await CustomerAddress.find({ customer: req.user }).populate("customer")
+    const result = await CustomerAddress
+        .find({ customer: req.user })
+        .populate("customer")
+        .populate("city")
     return res.json({ messsage: "Fetch Orders Success", result })
 })
 exports.rescheduleOrder = asyncHandler(async (req, res) => {
