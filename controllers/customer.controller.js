@@ -120,11 +120,13 @@ exports.placeOrder = asyncHandler(async (req, res) => {
         await CustomerAddress.create({ customer: req.user, location, city })
     }
     const result = await Customer.findById(customer)
-    await sendEmail({
-        to: result.email, subject: "Welcome to Lab SAAS", message: `
-    <h1>${result.name},Welcome to Lab SAAS</h1>
-    <p>Your Order Details are  ${package}</p>
-    `})
+    if (result.email) {
+        await sendEmail({
+            to: result.email, subject: "Welcome to Lab SAAS", message: `
+            <h1>${result.name},Welcome to Lab SAAS</h1>
+            <p>Your Order Details are  ${package}</p>
+            `})
+    }
     await Orders.create({ customer, package, location, city, schedule, time })
     // await Orders.create({ customer, package })
     return res.json({ messsage: "Customer Orders Placed Successfully" })
