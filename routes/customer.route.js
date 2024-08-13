@@ -1,8 +1,9 @@
 const router = require("express").Router()
+const { customerProtected } = require("../middleware/protected")
 const customerController = require("./../controllers/customer.controller")
 
 router
-    .post("/place-order", customerController.placeOrder)
+    .post("/place-order", customerProtected, customerController.placeOrder)
     .get("/fetch-adress", customerController.fetchCustomerAddress)
     .get("/fetch-orders", customerController.fetchOrders)
     .put("/reschedule-order/:orderId", customerController.rescheduleOrder)
