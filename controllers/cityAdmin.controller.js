@@ -59,7 +59,7 @@ exports.registerLab = asyncHandler(async (req, res) => {
 
 })
 exports.getAllLabs = asyncHandler(async (req, res) => {
-    const result = await Lab.find({ admin: req.userId })// userId from protected page
+    const result = await Lab.find({ admin: req.user })// userId from protected page
     return res.json({ messsage: "Lab Fetch Success", result })
 
 })
