@@ -33,6 +33,18 @@ const customerPackageSchema = new mongoose.Schema({
         type: [String],
         required: true,
     },
+    parameter: {
+        type: Number,
+        required: true,
+    },
+    rating: {
+        type: Number,
+        required: true,
+    },
+    tat: {
+        type: Number,
+        required: true,
+    },
 
 }, { timestamps: true })
 

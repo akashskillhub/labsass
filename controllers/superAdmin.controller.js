@@ -213,7 +213,7 @@ exports.createCustomerPackage = asyncHandler(async (req, res) => {
             return res.status(400).json({ messsage: "Multer Reeor" + err.message })
         }
 
-        const { name, amount, mrp, desc, company, test } = req.body
+        const { name, amount, mrp, desc, company, test, parameter, rating, tat } = req.body
         const { isError, error } = checkEmpty({ name, amount, mrp, desc, company, test })
         if (isError) {
             return res.status(400).json({ messsage: "All Feilds Required", error })
@@ -221,7 +221,18 @@ exports.createCustomerPackage = asyncHandler(async (req, res) => {
         if (!validator.isMongoId(company)) {
             return res.status(400).json({ messsage: "Invalid Company ID", error: "Invalid Company ID" })
         }
-        await CustomerPackages.create({ name, amount, mrp, desc, test, company, hero: req.file.filename || null })
+        await CustomerPackages.create({
+            name,
+            amount,
+            mrp,
+            desc,
+            test,
+            parameter,
+            rating,
+            tat,
+            company,
+            hero: req.file.filename || null
+        })
         return res.json({ messsage: "Customer Package Create Success" })
     })
 
