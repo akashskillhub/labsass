@@ -3,6 +3,7 @@ const { customerProtected } = require("../middleware/protected")
 const customerController = require("./../controllers/customer.controller")
 
 router
+    .post("/update-profile", customerProtected, customerController.updateCustomerDetails)
     .post("/place-order", customerProtected, customerController.placeOrder)
     .get("/fetch-adress", customerController.fetchCustomerAddress)
     .get("/fetch-orders", customerController.fetchOrders)

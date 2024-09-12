@@ -23,6 +23,7 @@ const City = require("../models/City")
 const Medical = require("../models/Medical")
 const MedicalOrder = require("../models/MedicalOrder")
 
+const cloudinary = require("./../utils/cloudinary.config")
 
 //TODO: City Admin Start
 
@@ -174,7 +175,11 @@ exports.registerCompany = asyncHandler(async (req, res) => {
                 error: "Company Already Registered with Us"
             })
         }
-        await Company.create({ name, desc, logo: req.file.filename || null })
+        if (!req.file) {
+            return res.status(400).json({ messsage: "Logo Required" })
+        }
+        const { secure_url } = await cloudinary.uploader.upload(req.file.path)
+        await Company.create({ name, desc, logo: secure_url })
         return res.json({ messsage: "Company Register Success" })
 
     })
@@ -185,8 +190,10 @@ exports.updateCompany = asyncHandler(async (req, res) => {
         const { name, desc } = req.body
         const result = await Company.findById(companyId)
         if (req.file) {
-            fs.unlinkSync(path.join(__dirname, "..", "uploads", "logo", result.logo))
-            await Company.findByIdAndUpdate(companyId, { name, desc, logo: req.file.fieldname })
+            // fs.unlinkSync(path.join(__dirname, "..", "uploads", "logo", result.logo))
+            await cloudinary.uploader.destroy(path.basename(result.logo))
+            const { secure_url } = await cloudinary.uploader.upload(req.file.path)
+            await Company.findByIdAndUpdate(companyId, { name, desc, logo: secure_url })
         } else {
 
             await Company.findByIdAndUpdate(companyId, { name, desc })
@@ -196,7 +203,7 @@ exports.updateCompany = asyncHandler(async (req, res) => {
 })
 exports.deleteCompany = asyncHandler(async (req, res) => {
     const { companyId } = req.params
-    await Company.findByIdAndDelete(companyId, { isDeleted: true })
+    await Company.findByIdAndUpdate(companyId, { isDeleted: true })
     return res.json({ messsage: "Company Delete Success" })
 
 })
@@ -221,6 +228,10 @@ exports.createCustomerPackage = asyncHandler(async (req, res) => {
         if (!validator.isMongoId(company)) {
             return res.status(400).json({ messsage: "Invalid Company ID", error: "Invalid Company ID" })
         }
+        if (!req.file) {
+            return res.status(400).json({ messsage: "Hero Image Required" })
+        }
+        const { secure_url } = await cloudinary.uploader.upload(req.file.path)
         await CustomerPackages.create({
             name,
             amount,
@@ -231,7 +242,7 @@ exports.createCustomerPackage = asyncHandler(async (req, res) => {
             rating,
             tat,
             company,
-            hero: req.file.filename || null
+            hero: secure_url
         })
         return res.json({ messsage: "Customer Package Create Success" })
     })
@@ -266,8 +277,9 @@ exports.updateCustomerPackage = asyncHandler(async (req, res) => {
         const { name, amount, mrp, desc, company } = req.body
         const result = await CustomerPackages.findById(packageId)
         if (req.file) {
-            fs.unlinkSync(path.join(__dirname, "..", "uploads", "package", result.hero))
-            await CustomerPackages.findByIdAndUpdate(packageId, { name, amount, mrp, desc, company, hero: req.file.filename })
+            await cloudinary.uploader.destroy(path.basename(result.hero))
+            const { secure_url } = await cloudinary.uploader.upload(req.file.path)
+            await CustomerPackages.findByIdAndUpdate(packageId, { name, amount, mrp, desc, company, hero: secure_url })
         } else {
             await CustomerPackages.findByIdAndUpdate(packageId, { name, amount, mrp, desc, company })
 
