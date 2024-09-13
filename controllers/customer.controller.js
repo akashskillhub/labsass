@@ -8,6 +8,7 @@ const Customer = require("../models/Customer")
 const CustomerAddress = require("../models/CustomerAddress")
 const MedicalOrder = require("../models/MedicalOrder")
 const Medical = require("../models/Medical")
+const cloudinary = require("./../utils/cloudinary.config")
 const { medicalImageUpload, customerAvatarUpload } = require("../utils/upload")
 
 
@@ -30,8 +31,8 @@ exports.updateCustomerDetails = asyncHandler(async (req, res) => {
             query.email = email
         }
         if (req.file) {
-            console.log(req.file)
-
+            const { secure_url } = await cloudinary.uploader.upload(req.file.path)
+            await Customer.findByIdAndUpdate(req.user, { ...query, avatar: secure_url })
         } else {
             await Customer.findByIdAndUpdate(req.user, query)
         }
