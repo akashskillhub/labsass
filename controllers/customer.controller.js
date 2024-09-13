@@ -18,7 +18,6 @@ exports.fetchCustomerDetails = asyncHandler(async (req, res) => {
 
     return res.json({ messsage: "Fetch Customer Details Success", result })
 })
-
 exports.updateCustomerDetails = asyncHandler(async (req, res) => {
     customerAvatarUpload(req, res, async err => {
 
@@ -31,6 +30,7 @@ exports.updateCustomerDetails = asyncHandler(async (req, res) => {
             query.email = email
         }
         if (req.file) {
+            console.log(req.file)
 
         } else {
             await Customer.findByIdAndUpdate(req.user, query)
