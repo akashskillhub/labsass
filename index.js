@@ -41,5 +41,5 @@ app.use((err, req, res, next) => {
 
 mongoose.connection.once("open", () => {
     console.log("MONGO SERVER RUNNING");
-    app.listen(5000, console.log("http://localhost:5000"))
+    app.listen(process.env.PORT, console.log(`http://localhost:${process.env.PORT}`))
 });
