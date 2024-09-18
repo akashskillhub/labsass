@@ -35,4 +35,13 @@ exports.getAllCompanies = asyncHandler(async (req, res) => {
     const result = await Company.find()
     return res.json({ messsage: "Company Fetch Successfully", result })
 })
+exports.handleSearch = asyncHandler(async (req, res) => {
+    const result = await CustomerPackages.find({
+        $or: [
+            { name: { $regex: req.query.term, $options: "i" } },
+            { test: { $regex: req.query.term, $options: "i" } },
+        ]
+    })
+    return res.json({ messsage: "Company Fetch Successfully", result })
+})
 
